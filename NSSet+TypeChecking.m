@@ -10,7 +10,7 @@
 
 @implementation NSSet (TypeChecking)
 
-- (BOOL)allObjectsAreKindOfClass:(Class)c
+- (BOOL)CTCAllObjectsAreKindOfClass:(Class)c
 {
     for (id i in self)
     {

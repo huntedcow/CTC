@@ -10,6 +10,11 @@
 
 @interface NSArray (TypeChecking)
 
-- (BOOL)allObjectsAreKindOfClass:(Class)c;
+- (BOOL)CTCAllObjectsAreKindOfClass:(Class)c;
+
+- (BOOL)CTCObjectsAreKindsOfClasses:(NSArray *)classSpec;
+- (BOOL)CTCObjectsAreKindsOfClasses:(NSArray *)classSpec
+             allowAdditionalObjects:(BOOL)additionalObjects
+             missingTrailingObjects:(BOOL)missingObjects;
 
 @end

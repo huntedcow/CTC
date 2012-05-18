@@ -12,24 +12,59 @@
 
 @implementation NSDictionary (TypeChecking)
 
-- (BOOL)allKeysAreKindOfClass:(Class)c
+- (BOOL)CTCAllKeysAreKindOfClass:(Class)c
 {
-    return [[self allKeys] allObjectsAreKindOfClass:c];
+    return [[self allKeys] CTCAllObjectsAreKindOfClass:c];
 }
 
-- (BOOL)allObjectsAreKindOfClass:(Class)c
+- (BOOL)CTCAllObjectsAreKindOfClass:(Class)c
 {
-    return [[self allValues] allObjectsAreKindOfClass:c];
+    return [[self allValues] CTCAllObjectsAreKindOfClass:c];
 }
 
-- (BOOL)allKeysAreKindOfClass:(Class)kc andObjectsAreKindOfClass:(Class)oc
+- (BOOL)CTCAllKeysAreKindOfClass:(Class)kc andObjectsAreKindOfClass:(Class)oc
 {
     __block BOOL invalid = NO;
     [self enumerateKeysAndObjectsUsingBlock:^(id k, id o, BOOL *stop)
      {
          *stop = invalid = ![k isKindOfClass:kc] || ![o isKindOfClass:oc];
      }];
-    return invalid;
+    return !invalid;
+}
+
+- (BOOL)CTCObjectsAreKindsOfClasses:(NSDictionary *)classSpec
+{
+    return [self CTCObjectsAreKindsOfClasses:classSpec allowAdditionalObjects:NO missingObjects:NO];
+}
+
+- (BOOL)CTCObjectsAreKindsOfClasses:(NSDictionary *)classSpec
+             allowAdditionalObjects:(BOOL)additionalObjects
+                     missingObjects:(BOOL)missingObjects
+{
+    NSUInteger numberOfObjectsFound = 0;
+    for (id k in classSpec)
+    {
+        Class expectedClass = [classSpec objectForKey:k];
+        id o = [self objectForKey:k];
+        if (nil != o)
+        {
+            numberOfObjectsFound++;
+            if (![o isKindOfClass:expectedClass])
+            {
+                return NO;
+            }
+        }
+        else if (!missingObjects)
+        {
+            return NO;
+        }
+    }
+    if (!additionalObjects)
+    {
+        return [self count] == numberOfObjectsFound;
+    }
+    
+    return YES;
 }
 
 @end

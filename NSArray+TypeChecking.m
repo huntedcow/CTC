@@ -10,7 +10,7 @@
 
 @implementation NSArray (TypeChecking)
 
-- (BOOL)allObjectsAreKindOfClass:(Class)c
+- (BOOL)CTCAllObjectsAreKindOfClass:(Class)c
 {
     for (id i in self)
     {
@@ -19,6 +19,47 @@
             return NO;
         }
     }
+    return YES;
+}
+
+- (BOOL)CTCObjectsAreKindsOfClasses:(NSArray *)classSpec
+{
+    return [self CTCObjectsAreKindsOfClasses:classSpec allowAdditionalObjects:NO missingTrailingObjects:NO];
+}
+
+- (BOOL)CTCObjectsAreKindsOfClasses:(NSArray *)classSpec
+             allowAdditionalObjects:(BOOL)additionalObjects
+             missingTrailingObjects:(BOOL)missingObjects
+{
+    NSUInteger c = [self count];
+    NSUInteger csc = [classSpec count];
+    if (!additionalObjects && c > csc)
+    {
+        return NO;
+    }
+    if (!missingObjects && c < csc)
+    {
+        return NO;
+    }
+    
+    NSUInteger idx = 0;
+    for (Class cl in classSpec)
+    {
+        if (idx < c)
+        {
+            if (![[self objectAtIndex:idx] isKindOfClass:cl])
+            {
+                return NO;
+            }
+        }
+        else
+        {
+            return YES;
+        }
+        
+        idx++;
+    }
+    
     return YES;
 }
 
